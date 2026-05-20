@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -92,7 +93,7 @@ public class LoginController {
             if ("ADMIN".equals(verificado.getRol())) {
                 navegarAlAdmin(stage, verificado.getNombre());
             } else {
-                navegarAlPOS(stage);
+                navegarAlPOS(stage, verificado);
             }
 
         } catch (Exception e) {
@@ -113,12 +114,22 @@ public class LoginController {
         stage.centerOnScreen();
     }
 
-    private void navegarAlPOS(Stage stage) throws IOException {
+    private void navegarAlPOS(Stage stage, UsuarioDAO.UsuarioRow cajero) throws IOException {
+        String fondoStr = txtFondoInicial.getText().trim();
+        BigDecimal fondo = fondoStr.isEmpty() ? BigDecimal.ZERO : new BigDecimal(fondoStr);
+        int turnoId = AppContext.getInstance().turnoDAO().abrir(cajero.getId(), fondo);
+
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/main_pos.fxml"));
         Parent root = loader.load();
+
+        POSController ctrl = loader.getController();
+        ctrl.setCajero(cajero.getId(), cajero.getNombre());
+        ctrl.setTurno(turnoId);
+
         Scene scene = new Scene(root, 1280, 800);
         scene.getStylesheets().add(getClass().getResource("/css/design-system.css").toExternalForm());
         stage.setScene(scene);
+        stage.setMaximized(true);
         stage.centerOnScreen();
     }
 

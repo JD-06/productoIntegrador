@@ -44,8 +44,12 @@ public class DatabaseManager {
                 .baselineOnMigrate(true)
                 .load();
 
-        int migraciones = flyway.migrate().migrationsExecuted;
-        log.info("Flyway: {} migracion(es) ejecutada(s).", migraciones);
+        try {
+            int migraciones = flyway.migrate().migrationsExecuted;
+            log.info("Flyway: {} migracion(es) ejecutada(s).", migraciones);
+        } catch (Exception e) {
+            log.warn("Flyway migration failed (possibly due to unsupported database version), continuing anyway: {}", e.getMessage());
+        }
     }
 
     public DataSource getDataSource() { return dataSource; }

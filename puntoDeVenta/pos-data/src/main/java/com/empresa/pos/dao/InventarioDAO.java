@@ -117,6 +117,25 @@ public class InventarioDAO extends BaseDAO {
         return null;
     }
 
+    public void establecerStock(int productoId, int stockActual, int stockMinimo) {
+        String sql = """
+                INSERT INTO inventario (producto_id, stock_actual, stock_minimo)
+                VALUES (?, ?, ?)
+                ON CONFLICT (producto_id) DO UPDATE SET
+                    stock_actual = EXCLUDED.stock_actual,
+                    stock_minimo = EXCLUDED.stock_minimo
+                """;
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, productoId);
+            ps.setInt(2, stockActual);
+            ps.setInt(3, stockMinimo);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Error al establecer stock para producto_id=" + productoId, e);
+        }
+    }
+
     // ---------------------------------------------------------------
     // Mapping
     // ---------------------------------------------------------------

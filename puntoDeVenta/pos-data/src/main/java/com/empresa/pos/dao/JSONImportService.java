@@ -152,7 +152,7 @@ public class JSONImportService {
                         if (catId != null) psP.setInt(4, catId);
                         else psP.setNull(4, java.sql.Types.INTEGER);
                         psP.setBigDecimal(5, p.precio != null
-                                ? BigDecimal.valueOf(p.precio)
+                                ? BigDecimal.valueOf(p.precio).multiply(new BigDecimal("100"))
                                 : BigDecimal.ZERO);
                         psP.setString(6, p.unidad);
                         psP.setString(7, p.imagen_local);

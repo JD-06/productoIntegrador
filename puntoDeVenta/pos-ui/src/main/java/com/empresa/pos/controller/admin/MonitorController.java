@@ -75,15 +75,27 @@ public class MonitorController implements Initializable {
             }
             tblAlertas.setItems(FXCollections.observableArrayList(alertas));
 
+            List<CorteHistorico> cortes = new ArrayList<>();
+            for (com.empresa.pos.dao.TurnoDAO.Turno t : ctx.turnoDAO().findAll()) {
+                cortes.add(new CorteHistorico(
+                    t.getCajeroNombre(),
+                    t.getFondoInicial() != null ? String.format("$%.2f", t.getFondoInicial()) : "$0.00",
+                    t.getEfectivoIngresado() != null ? String.format("$%.2f", t.getEfectivoIngresado()) : "$0.00",
+                    t.getCobtoTarjeta() != null ? String.format("$%.2f", t.getCobtoTarjeta()) : "$0.00",
+                    t.getVentaTotal() != null ? String.format("$%.2f", t.getVentaTotal()) : "$0.00",
+                    t.getEstado()
+                ));
+            }
+            tblCortes.setItems(FXCollections.observableArrayList(cortes));
+
         } catch (Exception e) {
             log.warn("No se pudieron cargar datos del monitor: {}", e.getMessage());
             lblVentasGlobales.setText("$0.00");
             lblCortes.setText("0");
             lblTurnos.setText("0");
             tblAlertas.setItems(FXCollections.observableArrayList());
+            tblCortes.setItems(FXCollections.observableArrayList());
         }
-
-        tblCortes.setItems(FXCollections.observableArrayList());
     }
 
     // --- Modelos de presentacion ---

@@ -180,7 +180,7 @@ public class ProductoDAO extends BaseDAO {
             ps.setString(3, p.getMarca());
             if (p.getCategoriaId() > 0) ps.setInt(4, p.getCategoriaId());
             else ps.setNull(4, Types.INTEGER);
-            ps.setBigDecimal(5, p.getPrecio());
+            ps.setBigDecimal(5, p.getPrecio() != null ? p.getPrecio().multiply(new java.math.BigDecimal("100")) : java.math.BigDecimal.ZERO);
             ps.setString(6, p.getUnidad());
             ps.setBoolean(7, p.isActivo());
             ps.setString(8, p.getImagenLocal());
@@ -204,7 +204,7 @@ public class ProductoDAO extends BaseDAO {
             ps.setString(3, p.getMarca());
             if (p.getCategoriaId() > 0) ps.setInt(4, p.getCategoriaId());
             else ps.setNull(4, Types.INTEGER);
-            ps.setBigDecimal(5, p.getPrecio());
+            ps.setBigDecimal(5, p.getPrecio() != null ? p.getPrecio().multiply(new java.math.BigDecimal("100")) : java.math.BigDecimal.ZERO);
             ps.setString(6, p.getUnidad());
             ps.setBoolean(7, p.isActivo());
             ps.setString(8, p.getImagenLocal());
@@ -238,7 +238,8 @@ public class ProductoDAO extends BaseDAO {
         p.setMarca(rs.getString("marca"));
         p.setCategoriaId(rs.getInt("categoria_id"));
         p.setCategoria(rs.getString("categoria_nombre"));
-        p.setPrecio(rs.getBigDecimal("precio"));
+        BigDecimal dbPrecio = rs.getBigDecimal("precio");
+        p.setPrecio(dbPrecio != null ? dbPrecio.divide(new java.math.BigDecimal("100"), 2, java.math.RoundingMode.HALF_UP) : java.math.BigDecimal.ZERO);
         p.setUnidad(rs.getString("unidad"));
         p.setStockActual(rs.getInt("stock_actual"));
         p.setStockMinimo(rs.getInt("stock_minimo"));

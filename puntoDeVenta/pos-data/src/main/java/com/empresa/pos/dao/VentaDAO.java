@@ -165,7 +165,10 @@ public class VentaDAO extends BaseDAO {
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) return rs.getBigDecimal(1);
+            if (rs.next()) {
+                BigDecimal sum = rs.getBigDecimal(1);
+                return sum != null ? sum.divide(new java.math.BigDecimal("100"), 2, java.math.RoundingMode.HALF_UP) : java.math.BigDecimal.ZERO;
+            }
         } catch (SQLException e) {
             throw new RuntimeException("Error al calcular ventas globales", e);
         }
@@ -196,6 +199,124 @@ public class VentaDAO extends BaseDAO {
         return 0L;
     }
 
+    public static class DetalleVenta {
+        private int productoId;
+        private int cantidad;
+        private BigDecimal precioUnitario;
+        private BigDecimal subtotal;
+
+        public DetalleVenta(int productoId, int cantidad, BigDecimal precioUnitario, BigDecimal subtotal) {
+            this.productoId = productoId;
+            this.cantidad = cantidad;
+            this.precioUnitario = precioUnitario;
+            this.subtotal = subtotal;
+        }
+
+        public int getProductoId() { return productoId; }
+        public int getCantidad() { return cantidad; }
+        public BigDecimal getPrecioUnitario() { return precioUnitario; }
+        public BigDecimal getSubtotal() { return subtotal; }
+    }
+
+    public int getMetodoPagoId(String nombre) {
+        String sql = "SELECT id FROM metodos_pago WHERE nombre = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, nombre);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error al buscar metodo de pago: " + nombre, e);
+        }
+        // Fallback: intenta crearlo
+        String insert = "INSERT INTO metodos_pago (nombre) VALUES (?) RETURNING id";
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(insert)) {
+            ps.setString(1, nombre);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error al crear metodo de pago: " + nombre, e);
+        }
+        throw new RuntimeException("No se pudo obtener metodo de pago: " + nombre);
+    }
+
+    public int insertConDetalle(Venta v, List<DetalleVenta> detalles) {
+        String sqlVenta = """
+                INSERT INTO ventas
+                  (turno_id, cajero_id, cliente_id, subtotal, iva, total,
+                   metodo_pago_id, monto_recibido, cambio, estado)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                RETURNING id
+                """;
+        String sqlDetalle = """
+                INSERT INTO detalle_ventas
+                  (venta_id, producto_id, cantidad, precio_unitario, descuento, subtotal)
+                VALUES (?, ?, ?, ?, ?, ?)
+                """;
+
+        Connection conn = null;
+        PreparedStatement psVenta = null;
+        PreparedStatement psDetalle = null;
+        ResultSet rs = null;
+        try {
+            conn = getConnection();
+            conn.setAutoCommit(false);
+
+            psVenta = conn.prepareStatement(sqlVenta);
+            psVenta.setInt(1, v.getTurnoId());
+            psVenta.setInt(2, v.getCajeroId());
+            if (v.getClienteId() > 0) psVenta.setInt(3, v.getClienteId());
+            else psVenta.setNull(3, Types.INTEGER);
+            psVenta.setBigDecimal(4, v.getSubtotal() != null ? v.getSubtotal().multiply(new java.math.BigDecimal("100")) : java.math.BigDecimal.ZERO);
+            psVenta.setBigDecimal(5, v.getIva() != null ? v.getIva().multiply(new java.math.BigDecimal("100")) : java.math.BigDecimal.ZERO);
+            psVenta.setBigDecimal(6, v.getTotal() != null ? v.getTotal().multiply(new java.math.BigDecimal("100")) : java.math.BigDecimal.ZERO);
+            psVenta.setInt(7, v.getMetodoPagoId());
+            psVenta.setBigDecimal(8, v.getMontoRecibido() != null ? v.getMontoRecibido().multiply(new java.math.BigDecimal("100")) : java.math.BigDecimal.ZERO);
+            psVenta.setBigDecimal(9, v.getCambio() != null ? v.getCambio().multiply(new java.math.BigDecimal("100")) : java.math.BigDecimal.ZERO);
+            psVenta.setString(10, v.getEstado() != null ? v.getEstado() : "COMPLETADA");
+
+            rs = psVenta.executeQuery();
+            int ventaId = 0;
+            if (rs.next()) {
+                ventaId = rs.getInt(1);
+            } else {
+                throw new RuntimeException("No se obtuvo id al insertar venta");
+            }
+            closeQuietly(rs);
+            closeQuietly(psVenta);
+
+            psDetalle = conn.prepareStatement(sqlDetalle);
+            for (DetalleVenta d : detalles) {
+                psDetalle.setInt(1, ventaId);
+                psDetalle.setInt(2, d.getProductoId());
+                psDetalle.setInt(3, d.getCantidad());
+                psDetalle.setBigDecimal(4, d.getPrecioUnitario() != null ? d.getPrecioUnitario().multiply(new java.math.BigDecimal("100")) : java.math.BigDecimal.ZERO);
+                psDetalle.setBigDecimal(5, java.math.BigDecimal.ZERO);
+                psDetalle.setBigDecimal(6, d.getSubtotal() != null ? d.getSubtotal().multiply(new java.math.BigDecimal("100")) : java.math.BigDecimal.ZERO);
+                psDetalle.addBatch();
+            }
+            psDetalle.executeBatch();
+
+            conn.commit();
+            return ventaId;
+        } catch (SQLException e) {
+            if (conn != null) {
+                try { conn.rollback(); } catch (SQLException ignored) {}
+            }
+            throw new RuntimeException("Error al insertar venta con detalle", e);
+        } finally {
+            closeQuietly(rs);
+            closeQuietly(psVenta);
+            closeQuietly(psDetalle);
+            if (conn != null) {
+                try { conn.setAutoCommit(true); conn.close(); } catch (SQLException ignored) {}
+            }
+        }
+    }
+
     // ---------------------------------------------------------------
     // Mapping
     // ---------------------------------------------------------------
@@ -208,13 +329,23 @@ public class VentaDAO extends BaseDAO {
         v.setCajeroNombre(rs.getString("cajero_nombre"));
         v.setClienteId(rs.getInt("cliente_id"));
         v.setClienteNombre(rs.getString("cliente_nombre"));
-        v.setSubtotal(rs.getBigDecimal("subtotal"));
-        v.setIva(rs.getBigDecimal("iva"));
-        v.setTotal(rs.getBigDecimal("total"));
+        BigDecimal dbSubtotal = rs.getBigDecimal("subtotal");
+        v.setSubtotal(dbSubtotal != null ? dbSubtotal.divide(new java.math.BigDecimal("100"), 2, java.math.RoundingMode.HALF_UP) : java.math.BigDecimal.ZERO);
+        
+        BigDecimal dbIva = rs.getBigDecimal("iva");
+        v.setIva(dbIva != null ? dbIva.divide(new java.math.BigDecimal("100"), 2, java.math.RoundingMode.HALF_UP) : java.math.BigDecimal.ZERO);
+        
+        BigDecimal dbTotal = rs.getBigDecimal("total");
+        v.setTotal(dbTotal != null ? dbTotal.divide(new java.math.BigDecimal("100"), 2, java.math.RoundingMode.HALF_UP) : java.math.BigDecimal.ZERO);
+        
         v.setMetodoPagoId(rs.getInt("metodo_pago_id"));
         v.setMetodoPagoNombre(rs.getString("metodo_pago_nombre"));
-        v.setMontoRecibido(rs.getBigDecimal("monto_recibido"));
-        v.setCambio(rs.getBigDecimal("cambio"));
+        
+        BigDecimal dbMontoRecibido = rs.getBigDecimal("monto_recibido");
+        v.setMontoRecibido(dbMontoRecibido != null ? dbMontoRecibido.divide(new java.math.BigDecimal("100"), 2, java.math.RoundingMode.HALF_UP) : java.math.BigDecimal.ZERO);
+        
+        BigDecimal dbCambio = rs.getBigDecimal("cambio");
+        v.setCambio(dbCambio != null ? dbCambio.divide(new java.math.BigDecimal("100"), 2, java.math.RoundingMode.HALF_UP) : java.math.BigDecimal.ZERO);
         v.setEstado(rs.getString("estado"));
         Timestamp ts = rs.getTimestamp("creado_en");
         if (ts != null) v.setCreadoEn(ts.toLocalDateTime());

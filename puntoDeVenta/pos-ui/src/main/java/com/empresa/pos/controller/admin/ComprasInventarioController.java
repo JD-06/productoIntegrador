@@ -147,6 +147,55 @@ public class ComprasInventarioController implements Initializable {
         }
     }
 
+    @FXML
+    private void handleModificarStock() {
+        FilaInventario fila = tblInventario.getSelectionModel().getSelectedItem();
+        if (fila == null) {
+            new Alert(Alert.AlertType.WARNING, "Selecciona un producto del inventario.", ButtonType.OK).showAndWait();
+            return;
+        }
+
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.setTitle("Modificar Stock");
+        dialog.setHeaderText("Actualizar inventario de " + fila.getNombre());
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+
+        TextField txtActual = new TextField(String.valueOf(fila.getStockActual()));
+        TextField txtMinimo = new TextField(String.valueOf(fila.getStockMinimo()));
+
+        grid.add(new Label("Stock actual:"), 0, 0);
+        grid.add(txtActual, 1, 0);
+        grid.add(new Label("Stock minimo:"), 0, 1);
+        grid.add(txtMinimo, 1, 1);
+        dialog.getDialogPane().setContent(grid);
+
+        Optional<ButtonType> result = dialog.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            try {
+                int stockActual = Integer.parseInt(txtActual.getText().trim());
+                int stockMinimo = Integer.parseInt(txtMinimo.getText().trim());
+                if (stockActual < 0 || stockMinimo < 0) {
+                    throw new IllegalArgumentException("Los valores no pueden ser negativos.");
+                }
+
+                InventarioDAO dao = AppContext.getInstance().inventarioDAO();
+                InventarioDAO.InventarioRow row = dao.findAll().stream()
+                        .filter(r -> r.getSku().equals(fila.getSku()))
+                        .findFirst()
+                        .orElseThrow(() -> new IllegalStateException("No se encontro el registro de inventario."));
+                dao.establecerStock(row.getProductoId(), stockActual, stockMinimo);
+                cargarInventario();
+            } catch (Exception e) {
+                log.error("Error al modificar stock", e);
+                new Alert(Alert.AlertType.ERROR, "No se pudo actualizar el stock: " + e.getMessage(), ButtonType.OK).showAndWait();
+            }
+        }
+    }
+
     // ---- Modelos de presentacion ----
 
     public static class FilaInventario {

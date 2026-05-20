@@ -2,6 +2,7 @@ package com.empresa.pos.controller.admin;
 
 import com.empresa.pos.dao.AppContext;
 import com.empresa.pos.dao.CategoriaDAO;
+import com.empresa.pos.dao.InventarioDAO;
 import com.empresa.pos.dao.JSONImportService;
 import com.empresa.pos.dao.ProductoDAO;
 import javafx.collections.FXCollections;
@@ -253,6 +254,63 @@ public class CatalogoController implements Initializable {
                 err.showAndWait();
             }
         }
+    }
+
+    @FXML
+    private void handleAgregarStock() {
+        ProductoDAO.Producto producto = tblProductos.getSelectionModel().getSelectedItem();
+        if (producto == null) {
+            mostrarMensaje(Alert.AlertType.WARNING, "Selecciona un producto", "Primero selecciona un producto del catalogo.");
+            return;
+        }
+
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.setTitle("Agregar Stock");
+        dialog.setHeaderText("Actualizar stock de: " + producto.getNombre());
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+
+        TextField txtActual = new TextField(String.valueOf(producto.getStockActual()));
+        TextField txtMinimo = new TextField(String.valueOf(producto.getStockMinimo()));
+
+        grid.add(new Label("Stock actual:"), 0, 0);
+        grid.add(txtActual, 1, 0);
+        grid.add(new Label("Stock minimo:"), 0, 1);
+        grid.add(txtMinimo, 1, 1);
+        GridPane.setHgrow(txtActual, Priority.ALWAYS);
+        GridPane.setHgrow(txtMinimo, Priority.ALWAYS);
+        dialog.getDialogPane().setContent(grid);
+
+        Optional<ButtonType> result = dialog.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            try {
+                int stockActual = Integer.parseInt(txtActual.getText().trim());
+                int stockMinimo = Integer.parseInt(txtMinimo.getText().trim());
+                if (stockActual < 0 || stockMinimo < 0) {
+                    throw new IllegalArgumentException("Los valores no pueden ser negativos.");
+                }
+
+                AppContext.getInstance().inventarioDAO()
+                        .establecerStock(producto.getId(), stockActual, stockMinimo);
+                cargarProductos();
+                mostrarMensaje(Alert.AlertType.INFORMATION, "Stock actualizado",
+                        "Se actualizo el inventario de " + producto.getNombre() + ".");
+            } catch (Exception e) {
+                log.error("Error al actualizar stock", e);
+                mostrarMensaje(Alert.AlertType.ERROR, "Error al actualizar stock", e.getMessage());
+            }
+        }
+    }
+
+    private void mostrarMensaje(Alert.AlertType tipo, String titulo, String mensaje) {
+        Alert alert = new Alert(tipo);
+        alert.setTitle(titulo);
+        alert.setHeaderText(null);
+        alert.setContentText(mensaje);
+        alert.showAndWait();
     }
 
     // Helper inner class for ComboBox display

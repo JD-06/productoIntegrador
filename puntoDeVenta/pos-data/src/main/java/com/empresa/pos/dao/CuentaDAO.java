@@ -122,8 +122,10 @@ public class CuentaDAO extends BaseDAO {
                 c.setClienteId(rs.getInt("cliente_id"));
                 c.setClienteNombre(rs.getString("cliente_nombre"));
                 c.setVentaId(rs.getInt("venta_id"));
-                c.setMonto(rs.getBigDecimal("monto"));
-                c.setSaldo(rs.getBigDecimal("saldo"));
+                BigDecimal dbMonto = rs.getBigDecimal("monto");
+                c.setMonto(dbMonto != null ? dbMonto.divide(new java.math.BigDecimal("100"), 2, java.math.RoundingMode.HALF_UP) : java.math.BigDecimal.ZERO);
+                BigDecimal dbSaldo = rs.getBigDecimal("saldo");
+                c.setSaldo(dbSaldo != null ? dbSaldo.divide(new java.math.BigDecimal("100"), 2, java.math.RoundingMode.HALF_UP) : java.math.BigDecimal.ZERO);
                 c.setEstado(rs.getString("estado"));
                 Date venc = rs.getDate("vencimiento");
                 if (venc != null) c.setVencimiento(venc.toLocalDate());
@@ -170,8 +172,8 @@ public class CuentaDAO extends BaseDAO {
                 """;
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setBigDecimal(1, monto);
-            ps.setBigDecimal(2, monto);
+            ps.setBigDecimal(1, monto != null ? monto.multiply(new java.math.BigDecimal("100")) : java.math.BigDecimal.ZERO);
+            ps.setBigDecimal(2, monto != null ? monto.multiply(new java.math.BigDecimal("100")) : java.math.BigDecimal.ZERO);
             ps.setInt(3, id);
             ps.executeUpdate();
         } catch (SQLException e) {
@@ -202,8 +204,10 @@ public class CuentaDAO extends BaseDAO {
                 c.setProveedorId(rs.getInt("proveedor_id"));
                 c.setProveedorNombre(rs.getString("proveedor_nombre"));
                 c.setCompraId(rs.getInt("compra_id"));
-                c.setMonto(rs.getBigDecimal("monto"));
-                c.setSaldo(rs.getBigDecimal("saldo"));
+                BigDecimal dbMonto = rs.getBigDecimal("monto");
+                c.setMonto(dbMonto != null ? dbMonto.divide(new java.math.BigDecimal("100"), 2, java.math.RoundingMode.HALF_UP) : java.math.BigDecimal.ZERO);
+                BigDecimal dbSaldo = rs.getBigDecimal("saldo");
+                c.setSaldo(dbSaldo != null ? dbSaldo.divide(new java.math.BigDecimal("100"), 2, java.math.RoundingMode.HALF_UP) : java.math.BigDecimal.ZERO);
                 c.setEstado(rs.getString("estado"));
                 Date venc = rs.getDate("vencimiento");
                 if (venc != null) c.setVencimiento(venc.toLocalDate());
@@ -250,8 +254,8 @@ public class CuentaDAO extends BaseDAO {
                 """;
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setBigDecimal(1, monto);
-            ps.setBigDecimal(2, monto);
+            ps.setBigDecimal(1, monto != null ? monto.multiply(new java.math.BigDecimal("100")) : java.math.BigDecimal.ZERO);
+            ps.setBigDecimal(2, monto != null ? monto.multiply(new java.math.BigDecimal("100")) : java.math.BigDecimal.ZERO);
             ps.setInt(3, id);
             ps.executeUpdate();
         } catch (SQLException e) {

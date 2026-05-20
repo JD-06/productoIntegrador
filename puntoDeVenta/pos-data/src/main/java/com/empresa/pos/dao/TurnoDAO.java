@@ -163,10 +163,14 @@ public class TurnoDAO extends BaseDAO {
         t.setCodigo(rs.getString("codigo"));
         t.setCajeroId(rs.getInt("cajero_id"));
         t.setCajeroNombre(rs.getString("cajero_nombre"));
-        t.setFondoInicial(rs.getBigDecimal("fondo_inicial"));
-        t.setEfectivoIngresado(rs.getBigDecimal("efectivo_ingresado"));
-        t.setCobtoTarjeta(rs.getBigDecimal("cobro_tarjeta"));
-        t.setVentaTotal(rs.getBigDecimal("venta_total"));
+        BigDecimal dbFondo = rs.getBigDecimal("fondo_inicial");
+        t.setFondoInicial(dbFondo != null ? dbFondo.divide(new java.math.BigDecimal("100"), 2, java.math.RoundingMode.HALF_UP) : java.math.BigDecimal.ZERO);
+        BigDecimal dbEfec = rs.getBigDecimal("efectivo_ingresado");
+        t.setEfectivoIngresado(dbEfec != null ? dbEfec.divide(new java.math.BigDecimal("100"), 2, java.math.RoundingMode.HALF_UP) : java.math.BigDecimal.ZERO);
+        BigDecimal dbTarj = rs.getBigDecimal("cobro_tarjeta");
+        t.setCobtoTarjeta(dbTarj != null ? dbTarj.divide(new java.math.BigDecimal("100"), 2, java.math.RoundingMode.HALF_UP) : java.math.BigDecimal.ZERO);
+        BigDecimal dbVenta = rs.getBigDecimal("venta_total");
+        t.setVentaTotal(dbVenta != null ? dbVenta.divide(new java.math.BigDecimal("100"), 2, java.math.RoundingMode.HALF_UP) : java.math.BigDecimal.ZERO);
         t.setEstado(rs.getString("estado"));
         Timestamp abierto = rs.getTimestamp("abierto_en");
         if (abierto != null) t.setAbiertoEn(abierto.toLocalDateTime());

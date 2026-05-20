@@ -10,6 +10,7 @@
     <!-- Toolbar -->
     <HBox alignment="CENTER_LEFT" spacing="12">
         <Label text="Catalogo de Productos" styleClass="page-title" HBox.hgrow="ALWAYS"/>
+        <Button text="+ Agregar Stock" styleClass="btn-primary" onAction="#handleAgregarStock"/>
         <Button text="+ Importar JSON" styleClass="btn-primary" onAction="#handleImportarJSON"/>
         <Button text="+ Nuevo Producto" styleClass="btn-success" onAction="#handleNuevoProducto"/>
     </HBox>
