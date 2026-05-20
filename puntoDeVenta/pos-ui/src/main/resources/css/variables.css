@@ -1,27 +1,6 @@
 /* variables.css - POS Empresarial ERP */
 .root {
-    /* Colores Primarios */
-    --color-brand-primary:  #1A2D5A;  /* Azul corporativo — barras y headers */
-    --color-brand-accent:   #F5A623;  /* Ámbar — botón COBRAR, acciones críticas */
-
-    /* Estados del Sistema */
-    --color-success:  #2E7D32;  /* Verde — transacción exitosa */
-    --color-error:    #C62828;  /* Rojo — error, cancelación, saldo vencido */
-    --color-warning:  #F57C00;  /* Naranja — advertencia, stock bajo */
-    --color-info:     #1565C0;  /* Azul — información, sincronización */
-
-    /* Superficies */
-    --color-surface-base:    #F5F5F5;  /* Fondo general */
-    --color-surface-card:    #FFFFFF;  /* Tarjetas y paneles */
-    --color-surface-sidebar: #263238;  /* Panel lateral */
-
-    /* Tipografía */
-    --color-text-primary:   #212121;
-    --color-text-secondary: #757575;
-    --color-text-on-dark:   #FFFFFF;
-    --color-text-total:     #1A2D5A;  /* Total de venta — máximo énfasis */
-
-    /* Fuentes */
-    -fx-font-family: "Roboto", "Segoe UI", sans-serif;
+    -fx-font-family: "Segoe UI", sans-serif;
     -fx-font-size: 14px;
+    -fx-background-color: #F5F5F5;
 }

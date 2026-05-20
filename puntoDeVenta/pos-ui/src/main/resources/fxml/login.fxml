@@ -3,13 +3,12 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.image.ImageView?>
 
-<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" 
-      fx:controller="com.empresa.pos.ui.LoginController"
-      alignment="CENTER" spacing="20" style="-fx-background-color: var(--color-surface-base);"
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.empresa.pos.controller.LoginController"
+      alignment="CENTER" spacing="20" style="-fx-background-color: #F5F5F5;"
       stylesheets="@../css/design-system.css">
-    
+
     <padding>
         <Insets top="40" right="40" bottom="40" left="40"/>
     </padding>
@@ -20,7 +19,7 @@
         </padding>
 
         <Label text="POS EMPRESARIAL" styleClass="text-header" style="-fx-font-size: 28px;"/>
-        <Label text="Inicio de Sesión" style="-fx-text-fill: var(--color-text-secondary);"/>
+        <Label text="Inicio de Sesion" style="-fx-text-fill: #757575;"/>
 
         <Region prefHeight="20" />
 
@@ -34,19 +33,19 @@
             <PasswordField fx:id="txtPin" promptText="****" style="-fx-font-size: 16px;"/>
         </VBox>
 
-        <VBox spacing="5" alignment="CENTER_LEFT">
+        <VBox fx:id="vboxFondo" spacing="5" alignment="CENTER_LEFT">
             <Label text="Fondo Inicial (Efectivo)" style="-fx-font-weight: bold;"/>
-            <TextField fx:id="txtFondoInicial" promptText="$0.00" style="-fx-font-size: 16px;"/>
+            <TextField fx:id="txtFondoInicial" promptText="0.00" style="-fx-font-size: 16px;"/>
         </VBox>
 
         <Region prefHeight="10" />
 
-        <Button fx:id="btnAbrirTurno" text="ABRIR TURNO [Enter]" 
-                maxWidth="Infinity" styleClass="btn-accent" 
+        <Button fx:id="btnAbrirTurno" text="ABRIR TURNO [Enter]"
+                maxWidth="Infinity" styleClass="btn-accent"
                 onAction="#handleAbrirTurno"/>
-        
-        <Label fx:id="lblError" text="" style="-fx-text-fill: var(--color-error);" wrapText="true"/>
+
+        <Label fx:id="lblError" text="" style="-fx-text-fill: #C62828;" wrapText="true"/>
     </VBox>
 
-    <Label text="v1.0.0 - Mayo 2026" style="-fx-text-fill: var(--color-text-secondary); -fx-font-size: 10px;"/>
+    <Label text="v1.0.0 - Mayo 2026" style="-fx-text-fill: #757575; -fx-font-size: 10px;"/>
 </VBox>

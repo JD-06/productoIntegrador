@@ -6,7 +6,7 @@
 <?import javafx.scene.text.Text?>
 
 <BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" 
-            fx:controller="com.empresa.pos.ui.POSController"
+            fx:controller="com.empresa.pos.controller.POSController"
             stylesheets="@../css/design-system.css">
     
     <!-- ZONA A: BARRA SUPERIOR -->
@@ -48,15 +48,15 @@
                 <VBox alignment="BOTTOM_RIGHT" spacing="5">
                     <HBox alignment="CENTER_RIGHT" spacing="20">
                         <Label text="SUBTOTAL:" style="-fx-font-size: 16px;"/>
-                        <Label fx:id="lblSubtotal" text="$0.00" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                        <Label fx:id="lblSubtotal" text="0.00" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
                     </HBox>
                     <HBox alignment="CENTER_RIGHT" spacing="20">
                         <Label text="IVA (16%):" style="-fx-font-size: 16px;"/>
-                        <Label fx:id="lblIva" text="$0.00" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                        <Label fx:id="lblIva" text="0.00" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
                     </HBox>
                     <HBox alignment="CENTER_RIGHT" spacing="20">
                         <Label text="TOTAL:" styleClass="text-header"/>
-                        <Label fx:id="lblTotal" text="$0.00" styleClass="text-total"/>
+                        <Label fx:id="lblTotal" text="0.00" styleClass="text-total"/>
                     </HBox>
                 </VBox>
             </VBox>

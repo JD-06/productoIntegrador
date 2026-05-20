@@ -1,177 +1,217 @@
--- V1__init.sql: Initial database schema for POS Empresarial ERP
--- Compatible with SQLite and PostgreSQL
+-- ============================================================
+--  POS Empresarial ERP — Migración inicial (PostgreSQL)
+--  V1 — Estructura completa: Fases 1 a 5
+-- ============================================================
 
-CREATE TABLE CATEGORIA (
-    uuid VARCHAR(36) PRIMARY KEY,
-    nombre VARCHAR(100) NOT NULL,
-    padre_id VARCHAR(36),
-    FOREIGN KEY (padre_id) REFERENCES CATEGORIA(uuid)
+-- 4.1  USUARIOS Y SEGURIDAD
+CREATE TABLE IF NOT EXISTS roles (
+  id     SERIAL PRIMARY KEY,
+  nombre VARCHAR(30) NOT NULL UNIQUE
 );
 
-CREATE TABLE PROVEEDOR (
-    uuid VARCHAR(36) PRIMARY KEY,
-    nombre VARCHAR(255) NOT NULL,
-    rfc VARCHAR(13) NOT NULL
+CREATE TABLE IF NOT EXISTS usuarios (
+  id        SERIAL PRIMARY KEY,
+  nombre    VARCHAR(100) NOT NULL,
+  pin_hash  VARCHAR(255) NOT NULL,
+  rol_id    INT NOT NULL REFERENCES roles(id),
+  activo    BOOLEAN DEFAULT TRUE,
+  creado_en TIMESTAMP DEFAULT NOW()
 );
 
-CREATE TABLE PRODUCTO (
-    uuid VARCHAR(36) PRIMARY KEY,
-    sku VARCHAR(50) UNIQUE NOT NULL,
-    descripcion TEXT NOT NULL,
-    precio DECIMAL(10,2) NOT NULL,
-    unidad_medida VARCHAR(36),
-    clave_sat VARCHAR(36),
-    iva_incluido BOOLEAN NOT NULL DEFAULT 1,
-    ieps_porcentaje DECIMAL(5,2) DEFAULT 0,
-    imagen_path TEXT,
-    stock_minimo INTEGER DEFAULT 0,
-    es_pesable BOOLEAN NOT NULL DEFAULT 0,
-    categoria_id VARCHAR(36),
-    proveedor_id VARCHAR(36),
-    FOREIGN KEY (categoria_id) REFERENCES CATEGORIA(uuid),
-    FOREIGN KEY (proveedor_id) REFERENCES PROVEEDOR(uuid)
+CREATE TABLE IF NOT EXISTS log_auditoria (
+  id             SERIAL PRIMARY KEY,
+  usuario_id     INT REFERENCES usuarios(id),
+  accion         VARCHAR(100) NOT NULL,
+  tabla_afectada VARCHAR(50),
+  registro_id    INT,
+  detalle        JSONB,
+  creado_en      TIMESTAMP DEFAULT NOW()
 );
 
-CREATE TABLE ALMACEN (
-    uuid VARCHAR(36) PRIMARY KEY,
-    nombre VARCHAR(255) NOT NULL,
-    sucursal_id VARCHAR(36) NOT NULL,
-    activo BOOLEAN NOT NULL DEFAULT 1
+-- 4.2  CATALOGO
+CREATE TABLE IF NOT EXISTS categorias (
+  id      SERIAL PRIMARY KEY,
+  nombre  VARCHAR(80) NOT NULL UNIQUE
 );
 
-CREATE TABLE STOCK (
-    uuid VARCHAR(36) PRIMARY KEY,
-    producto_id VARCHAR(36) NOT NULL,
-    almacen_id VARCHAR(36) NOT NULL,
-    cantidad DECIMAL(10,3) NOT NULL DEFAULT 0,
-    costo_promedio DECIMAL(10,2) NOT NULL DEFAULT 0,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (producto_id) REFERENCES PRODUCTO(uuid),
-    FOREIGN KEY (almacen_id) REFERENCES ALMACEN(uuid)
+CREATE TABLE IF NOT EXISTS productos (
+  id           SERIAL PRIMARY KEY,
+  sku          VARCHAR(20)   NOT NULL UNIQUE,
+  nombre       VARCHAR(150)  NOT NULL,
+  categoria_id INT REFERENCES categorias(id),
+  precio       NUMERIC(10,2) NOT NULL,
+  activo       BOOLEAN DEFAULT TRUE,
+  creado_en    TIMESTAMP DEFAULT NOW()
 );
 
-CREATE TABLE TURNO_CAJA (
-    uuid VARCHAR(36) PRIMARY KEY,
-    id_visible VARCHAR(50) NOT NULL,
-    cajero_id VARCHAR(36) NOT NULL,
-    sucursal_id VARCHAR(36) NOT NULL,
-    apertura TIMESTAMP NOT NULL,
-    cierre TIMESTAMP,
-    fondo_inicial DECIMAL(10,2) NOT NULL DEFAULT 0,
-    estado VARCHAR(20) NOT NULL,
-    total_efectivo DECIMAL(10,2) DEFAULT 0,
-    total_tarjeta DECIMAL(10,2) DEFAULT 0,
-    total_ventas DECIMAL(10,2) DEFAULT 0
+CREATE TABLE IF NOT EXISTS inventario (
+  producto_id  INT PRIMARY KEY REFERENCES productos(id),
+  stock_actual INT NOT NULL DEFAULT 0,
+  stock_minimo INT NOT NULL DEFAULT 0
 );
 
-CREATE TABLE CORTE_CAJA (
-    uuid VARCHAR(36) PRIMARY KEY,
-    turno_id VARCHAR(36) NOT NULL,
-    tipo VARCHAR(10) NOT NULL,
-    efectivo_contado DECIMAL(10,2) NOT NULL DEFAULT 0,
-    efectivo_sistema DECIMAL(10,2) NOT NULL DEFAULT 0,
-    diferencia DECIMAL(10,2) NOT NULL DEFAULT 0,
-    denominaciones TEXT, -- JSON
-    pin_cajero VARCHAR(255) NOT NULL,
-    pin_supervisor VARCHAR(255),
-    generado_at TIMESTAMP NOT NULL,
-    FOREIGN KEY (turno_id) REFERENCES TURNO_CAJA(uuid)
+CREATE TABLE IF NOT EXISTS movimientos_inventario (
+  id            SERIAL PRIMARY KEY,
+  producto_id   INT NOT NULL REFERENCES productos(id),
+  tipo          VARCHAR(20) NOT NULL,
+  cantidad      INT NOT NULL,
+  referencia_id INT,
+  usuario_id    INT REFERENCES usuarios(id),
+  creado_en     TIMESTAMP DEFAULT NOW()
 );
 
-CREATE TABLE CLIENTE_FISCAL (
-    uuid VARCHAR(36) PRIMARY KEY,
-    rfc VARCHAR(13) NOT NULL,
-    razon_social VARCHAR(255) NOT NULL,
-    cp_fiscal CHAR(5) NOT NULL,
-    regimen_fiscal VARCHAR(36),
-    uso_cfdi_default VARCHAR(36),
-    tipo VARCHAR(50) NOT NULL,
-    puntos_lealtad INTEGER DEFAULT 0,
-    email VARCHAR(255)
+-- 4.3  TURNOS Y VENTAS
+CREATE TABLE IF NOT EXISTS metodos_pago (
+  id      SERIAL PRIMARY KEY,
+  nombre  VARCHAR(30) NOT NULL UNIQUE
 );
 
-CREATE TABLE VENTA (
-    uuid VARCHAR(36) PRIMARY KEY,
-    folio VARCHAR(20) NOT NULL,
-    sucursal_id VARCHAR(36) NOT NULL,
-    cajero_id VARCHAR(36) NOT NULL,
-    turno_id VARCHAR(36) NOT NULL,
-    cliente_id VARCHAR(36),
-    fecha TIMESTAMP NOT NULL,
-    estado VARCHAR(20) NOT NULL,
-    subtotal DECIMAL(10,2) NOT NULL DEFAULT 0,
-    iva_total DECIMAL(10,2) NOT NULL DEFAULT 0,
-    ieps_total DECIMAL(10,2) NOT NULL DEFAULT 0,
-    total DECIMAL(10,2) NOT NULL DEFAULT 0,
-    cfdi_uuid TEXT,
-    sync_status VARCHAR(20) NOT NULL DEFAULT 'PENDING',
-    FOREIGN KEY (turno_id) REFERENCES TURNO_CAJA(uuid),
-    FOREIGN KEY (cliente_id) REFERENCES CLIENTE_FISCAL(uuid)
+CREATE TABLE IF NOT EXISTS clientes (
+  id                SERIAL PRIMARY KEY,
+  codigo            VARCHAR(20)  NOT NULL UNIQUE,
+  nombre            VARCHAR(150) NOT NULL,
+  rfc               VARCHAR(15),
+  tipo              VARCHAR(20)  NOT NULL,
+  puntos_acumulados INT DEFAULT 0,
+  creado_en         TIMESTAMP DEFAULT NOW()
 );
 
-CREATE TABLE DETALLE_VENTA (
-    uuid VARCHAR(36) PRIMARY KEY,
-    venta_id VARCHAR(36) NOT NULL,
-    producto_id VARCHAR(36) NOT NULL,
-    cantidad DECIMAL(10,3) NOT NULL,
-    precio_unitario DECIMAL(10,2) NOT NULL,
-    descuento_pct DECIMAL(5,2) DEFAULT 0,
-    iva_monto DECIMAL(10,2) NOT NULL DEFAULT 0,
-    ieps_monto DECIMAL(10,2) NOT NULL DEFAULT 0,
-    subtotal DECIMAL(10,2) NOT NULL,
-    FOREIGN KEY (venta_id) REFERENCES VENTA(uuid),
-    FOREIGN KEY (producto_id) REFERENCES PRODUCTO(uuid)
+CREATE TABLE IF NOT EXISTS turnos (
+  id                 SERIAL PRIMARY KEY,
+  codigo             VARCHAR(20)   NOT NULL UNIQUE,
+  cajero_id          INT NOT NULL REFERENCES usuarios(id),
+  fondo_inicial      NUMERIC(10,2) NOT NULL DEFAULT 0,
+  efectivo_ingresado NUMERIC(10,2) DEFAULT 0,
+  cobro_tarjeta      NUMERIC(10,2) DEFAULT 0,
+  venta_total        NUMERIC(10,2) DEFAULT 0,
+  estado             VARCHAR(15) DEFAULT 'ABIERTO',
+  abierto_en         TIMESTAMP DEFAULT NOW(),
+  cerrado_en         TIMESTAMP
 );
 
-CREATE TABLE PAGO (
-    uuid VARCHAR(36) PRIMARY KEY,
-    venta_id VARCHAR(36) NOT NULL,
-    metodo VARCHAR(50) NOT NULL,
-    monto DECIMAL(10,2) NOT NULL,
-    referencia VARCHAR(255),
-    FOREIGN KEY (venta_id) REFERENCES VENTA(uuid)
+CREATE TABLE IF NOT EXISTS ventas (
+  id             SERIAL PRIMARY KEY,
+  turno_id       INT NOT NULL REFERENCES turnos(id),
+  cajero_id      INT NOT NULL REFERENCES usuarios(id),
+  cliente_id     INT REFERENCES clientes(id),
+  subtotal       NUMERIC(10,2) NOT NULL,
+  iva            NUMERIC(10,2) NOT NULL,
+  total          NUMERIC(10,2) NOT NULL,
+  metodo_pago_id INT NOT NULL REFERENCES metodos_pago(id),
+  monto_recibido NUMERIC(10,2),
+  cambio         NUMERIC(10,2),
+  estado         VARCHAR(15) DEFAULT 'COMPLETADA',
+  creado_en      TIMESTAMP DEFAULT NOW()
 );
 
-CREATE TABLE CFDI (
-    uuid VARCHAR(36) PRIMARY KEY,
-    venta_id VARCHAR(36) NOT NULL,
-    uuid_sat VARCHAR(36),
-    folio VARCHAR(50),
-    serie VARCHAR(20),
-    estado VARCHAR(20) NOT NULL,
-    xml_timbrado TEXT,
-    qr_data TEXT,
-    fecha_timbrado TIMESTAMP,
-    pac_response TEXT, -- JSON
-    FOREIGN KEY (venta_id) REFERENCES VENTA(uuid)
+CREATE TABLE IF NOT EXISTS detalle_ventas (
+  id              SERIAL PRIMARY KEY,
+  venta_id        INT NOT NULL REFERENCES ventas(id) ON DELETE CASCADE,
+  producto_id     INT NOT NULL REFERENCES productos(id),
+  cantidad        INT NOT NULL,
+  precio_unitario NUMERIC(10,2) NOT NULL,
+  descuento       NUMERIC(10,2) DEFAULT 0,
+  subtotal        NUMERIC(10,2) NOT NULL
 );
 
-CREATE TABLE SYNC_QUEUE (
-    id VARCHAR(36) PRIMARY KEY,
-    entity_type VARCHAR(50) NOT NULL,
-    entity_id VARCHAR(36) NOT NULL,
-    operation VARCHAR(20) NOT NULL,
-    payload TEXT NOT NULL, -- JSON
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    attempts INTEGER DEFAULT 0,
-    last_error TEXT,
-    status VARCHAR(20) NOT NULL DEFAULT 'PENDING'
+-- 4.4  CRM Y LEALTAD
+CREATE TABLE IF NOT EXISTS transacciones_puntos (
+  id         SERIAL PRIMARY KEY,
+  cliente_id INT NOT NULL REFERENCES clientes(id),
+  venta_id   INT REFERENCES ventas(id),
+  puntos     INT NOT NULL,
+  motivo     VARCHAR(100),
+  creado_en  TIMESTAMP DEFAULT NOW()
 );
 
-CREATE TABLE LOG_AUDITORIA (
-    id VARCHAR(36) PRIMARY KEY,
-    timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    usuario_id VARCHAR(36) NOT NULL,
-    autorizante_id VARCHAR(36),
-    accion VARCHAR(100) NOT NULL,
-    entidad_tipo VARCHAR(50) NOT NULL,
-    entidad_id VARCHAR(36) NOT NULL,
-    valor_anterior TEXT, -- JSON
-    valor_nuevo TEXT, -- JSON
-    sucursal_id VARCHAR(36) NOT NULL,
-    ip_terminal VARCHAR(50)
+-- 4.5  ERP
+CREATE TABLE IF NOT EXISTS proveedores (
+  id       SERIAL PRIMARY KEY,
+  nombre   VARCHAR(150) NOT NULL,
+  rfc      VARCHAR(15),
+  contacto VARCHAR(100)
 );
 
-CREATE INDEX idx_log_auditoria_timestamp ON LOG_AUDITORIA(timestamp);
-CREATE INDEX idx_sync_queue_status ON SYNC_QUEUE(status);
-CREATE INDEX idx_venta_turno ON VENTA(turno_id);
+CREATE TABLE IF NOT EXISTS compras (
+  id           SERIAL PRIMARY KEY,
+  proveedor_id INT REFERENCES proveedores(id),
+  total        NUMERIC(10,2) NOT NULL,
+  usuario_id   INT REFERENCES usuarios(id),
+  creado_en    TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS detalle_compras (
+  id             SERIAL PRIMARY KEY,
+  compra_id      INT NOT NULL REFERENCES compras(id) ON DELETE CASCADE,
+  producto_id    INT NOT NULL REFERENCES productos(id),
+  cantidad       INT NOT NULL,
+  costo_unitario NUMERIC(10,2) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS cuentas_cobrar (
+  id          SERIAL PRIMARY KEY,
+  cliente_id  INT NOT NULL REFERENCES clientes(id),
+  venta_id    INT REFERENCES ventas(id),
+  monto       NUMERIC(10,2) NOT NULL,
+  saldo       NUMERIC(10,2) NOT NULL,
+  estado      VARCHAR(15) DEFAULT 'PENDIENTE',
+  vencimiento DATE,
+  creado_en   TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS cuentas_pagar (
+  id           SERIAL PRIMARY KEY,
+  proveedor_id INT NOT NULL REFERENCES proveedores(id),
+  compra_id    INT REFERENCES compras(id),
+  monto        NUMERIC(10,2) NOT NULL,
+  saldo        NUMERIC(10,2) NOT NULL,
+  estado       VARCHAR(15) DEFAULT 'PENDIENTE',
+  vencimiento  DATE,
+  creado_en    TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS empleados (
+  id         SERIAL PRIMARY KEY,
+  usuario_id INT UNIQUE REFERENCES usuarios(id),
+  puesto     VARCHAR(80),
+  salario    NUMERIC(10,2) NOT NULL,
+  activo     BOOLEAN DEFAULT TRUE
+);
+
+CREATE TABLE IF NOT EXISTS periodos_nomina (
+  id        SERIAL PRIMARY KEY,
+  periodo   VARCHAR(30) NOT NULL,
+  creado_en TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS nomina (
+  id           SERIAL PRIMARY KEY,
+  periodo_id   INT NOT NULL REFERENCES periodos_nomina(id),
+  empleado_id  INT NOT NULL REFERENCES empleados(id),
+  salario_base NUMERIC(10,2) NOT NULL,
+  deducciones  NUMERIC(10,2) DEFAULT 0,
+  neto_pagar   NUMERIC(10,2) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS permisos (
+  id          SERIAL PRIMARY KEY,
+  clave       VARCHAR(60) NOT NULL UNIQUE,
+  descripcion VARCHAR(120)
+);
+
+CREATE TABLE IF NOT EXISTS roles_permisos (
+  rol_id     INT NOT NULL REFERENCES roles(id),
+  permiso_id INT NOT NULL REFERENCES permisos(id),
+  PRIMARY KEY (rol_id, permiso_id)
+);
+
+-- INDICES
+CREATE INDEX IF NOT EXISTS idx_ventas_turno  ON ventas(turno_id);
+CREATE INDEX IF NOT EXISTS idx_ventas_cajero ON ventas(cajero_id);
+CREATE INDEX IF NOT EXISTS idx_ventas_creado ON ventas(creado_en);
+CREATE INDEX IF NOT EXISTS idx_detalle_venta ON detalle_ventas(venta_id);
+CREATE INDEX IF NOT EXISTS idx_inv_stock     ON inventario(stock_actual);
+CREATE INDEX IF NOT EXISTS idx_log_creado    ON log_auditoria(creado_en);
+CREATE INDEX IF NOT EXISTS idx_mov_producto  ON movimientos_inventario(producto_id);
+CREATE INDEX IF NOT EXISTS idx_cxc_estado    ON cuentas_cobrar(estado);
+CREATE INDEX IF NOT EXISTS idx_cxp_estado    ON cuentas_pagar(estado);
