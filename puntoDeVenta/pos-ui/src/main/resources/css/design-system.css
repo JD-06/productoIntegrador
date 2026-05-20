@@ -1,0 +1,68 @@
+/* design-system.css - Base styles for POS Empresarial ERP */
+@import "variables.css";
+
+.root {
+    -fx-background-color: var(--color-surface-base);
+    -fx-text-fill: var(--color-text-primary);
+}
+
+/* Typography styles */
+.text-header {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: var(--color-brand-primary);
+}
+
+.text-total {
+    -fx-font-family: "JetBrains Mono", "Roboto Mono", monospace;
+    -fx-font-size: 40px;
+    -fx-font-weight: bold;
+    -fx-text-fill: var(--color-text-total);
+}
+
+/* Button styles */
+.button {
+    -fx-background-radius: 4;
+    -fx-padding: 10 16;
+    -fx-cursor: hand;
+}
+
+.btn-primary {
+    -fx-background-color: var(--color-brand-primary);
+    -fx-text-fill: var(--color-text-on-dark);
+}
+
+.btn-primary:hover {
+    -fx-background-color: derive(var(--color-brand-primary), 10%);
+}
+
+.btn-accent {
+    -fx-background-color: var(--color-brand-accent);
+    -fx-text-fill: var(--color-text-on-dark);
+    -fx-min-height: 64px;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+.btn-accent:hover {
+    -fx-background-color: derive(var(--color-brand-accent), 10%);
+}
+
+/* Card and Surface styles */
+.card {
+    -fx-background-color: var(--color-surface-card);
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);
+    -fx-padding: 20;
+}
+
+/* Layout containers */
+.sidebar {
+    -fx-background-color: var(--color-surface-sidebar);
+    -fx-padding: 20;
+}
+
+.top-bar {
+    -fx-background-color: var(--color-brand-primary);
+    -fx-min-height: 56px;
+    -fx-padding: 0 20;
+}

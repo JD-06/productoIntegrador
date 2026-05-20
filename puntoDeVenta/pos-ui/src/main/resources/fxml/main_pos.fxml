@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.text.Text?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" 
+            fx:controller="com.empresa.pos.ui.POSController"
+            stylesheets="@../css/design-system.css">
+    
+    <!-- ZONA A: BARRA SUPERIOR -->
+    <top>
+        <HBox styleClass="top-bar" alignment="CENTER_LEFT" spacing="20">
+            <Label text="🖥 POS ERP" style="-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 18px;"/>
+            <Separator orientation="VERTICAL" />
+            <Label fx:id="lblUsuario" text="👤 Juan Pérez" style="-fx-text-fill: white;"/>
+            <Label fx:id="lblTurno" text="🔒 Turno: CX-7956" style="-fx-text-fill: white;"/>
+            <Region HBox.hgrow="ALWAYS" />
+            <Label fx:id="lblStatus" text="🟢 En línea" style="-fx-text-fill: white;"/>
+            <Button text="📊 Corte X" styleClass="btn-primary" />
+            <Button text="→ Cerrar Turno Z" style="-fx-background-color: #C62828; -fx-text-fill: white;" />
+        </HBox>
+    </top>
+
+    <center>
+        <HBox spacing="10">
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10"/>
+            </padding>
+
+            <!-- ZONA B: CARRITO ACTIVO (55%) -->
+            <VBox HBox.hgrow="ALWAYS" spacing="10" styleClass="card">
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <TextField fx:id="txtBusqueda" promptText="🔍 Escanear código... F5" HBox.hgrow="ALWAYS" style="-fx-font-size: 16px;"/>
+                    <Button text="Buscar" styleClass="btn-primary" />
+                </HBox>
+                
+                <TableView fx:id="tblCarrito" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="colProducto" text="Producto" prefWidth="250"/>
+                        <TableColumn fx:id="colCantidad" text="Cant." prefWidth="80"/>
+                        <TableColumn fx:id="colPrecio" text="Precio" prefWidth="100"/>
+                        <TableColumn fx:id="colSubtotal" text="Subtotal" prefWidth="120"/>
+                    </columns>
+                </TableView>
+
+                <VBox alignment="BOTTOM_RIGHT" spacing="5">
+                    <HBox alignment="CENTER_RIGHT" spacing="20">
+                        <Label text="SUBTOTAL:" style="-fx-font-size: 16px;"/>
+                        <Label fx:id="lblSubtotal" text="$0.00" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                    </HBox>
+                    <HBox alignment="CENTER_RIGHT" spacing="20">
+                        <Label text="IVA (16%):" style="-fx-font-size: 16px;"/>
+                        <Label fx:id="lblIva" text="$0.00" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                    </HBox>
+                    <HBox alignment="CENTER_RIGHT" spacing="20">
+                        <Label text="TOTAL:" styleClass="text-header"/>
+                        <Label fx:id="lblTotal" text="$0.00" styleClass="text-total"/>
+                    </HBox>
+                </VBox>
+            </VBox>
+
+            <!-- ZONA C: TECLADO / CATÁLOGO (45%) -->
+            <VBox prefWidth="450" spacing="10">
+                <GridPane vgap="10" hgap="10" VBox.vgrow="ALWAYS">
+                    <!-- Aquí irían los botones de categorías y productos -->
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    </columnConstraints>
+                    <Button text="Agua Pura 1L" wrapText="true" maxWidth="Infinity" maxHeight="Infinity" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                    <Button text="Café Amer M" wrapText="true" maxWidth="Infinity" maxHeight="Infinity" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                    <Button text="Galletas" wrapText="true" maxWidth="Infinity" maxHeight="Infinity" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+                    <!-- ... otros botones ... -->
+                </GridPane>
+
+                <Separator />
+
+                <GridPane vgap="5" hgap="5">
+                    <Button text="Desc F2" maxWidth="Infinity" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                    <Button text="Cant F9" maxWidth="Infinity" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                    <Button text="Borrar F11" maxWidth="Infinity" style="-fx-background-color: #C62828; -fx-text-fill: white;" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+                </GridPane>
+            </VBox>
+        </HBox>
+    </center>
+
+    <!-- ZONA D: BARRA DE ACCIONES -->
+    <bottom>
+        <HBox styleClass="card" spacing="15" alignment="CENTER_LEFT" style="-fx-padding: 10 20;">
+            <Button text="Cajón F4" styleClass="btn-primary" />
+            <Button text="Suspender Ctrl+S" styleClass="btn-primary" />
+            <Button text="🔒 Devolución Shift+F4" styleClass="btn-primary" />
+            <Region HBox.hgrow="ALWAYS" />
+            <Button text="COBRAR F12" styleClass="btn-accent" prefWidth="300" />
+        </HBox>
+    </bottom>
+</BorderPane>
