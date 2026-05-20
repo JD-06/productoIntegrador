@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.image.ImageView?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" 
+      fx:controller="com.empresa.pos.ui.LoginController"
+      alignment="CENTER" spacing="20" style="-fx-background-color: var(--color-surface-base);"
+      stylesheets="@../css/design-system.css">
+    
+    <padding>
+        <Insets top="40" right="40" bottom="40" left="40"/>
+    </padding>
+
+    <VBox alignment="CENTER" spacing="10" styleClass="card" maxWidth="400">
+        <padding>
+            <Insets top="30" right="30" bottom="30" left="30"/>
+        </padding>
+
+        <Label text="POS EMPRESARIAL" styleClass="text-header" style="-fx-font-size: 28px;"/>
+        <Label text="Inicio de Sesión" style="-fx-text-fill: var(--color-text-secondary);"/>
+
+        <Region prefHeight="20" />
+
+        <VBox spacing="5" alignment="CENTER_LEFT">
+            <Label text="Usuario" style="-fx-font-weight: bold;"/>
+            <ComboBox fx:id="cmbUsuario" maxWidth="Infinity" promptText="Seleccione operador"/>
+        </VBox>
+
+        <VBox spacing="5" alignment="CENTER_LEFT">
+            <Label text="PIN de Acceso" style="-fx-font-weight: bold;"/>
+            <PasswordField fx:id="txtPin" promptText="****" style="-fx-font-size: 16px;"/>
+        </VBox>
+
+        <VBox spacing="5" alignment="CENTER_LEFT">
+            <Label text="Fondo Inicial (Efectivo)" style="-fx-font-weight: bold;"/>
+            <TextField fx:id="txtFondoInicial" promptText="$0.00" style="-fx-font-size: 16px;"/>
+        </VBox>
+
+        <Region prefHeight="10" />
+
+        <Button fx:id="btnAbrirTurno" text="ABRIR TURNO [Enter]" 
+                maxWidth="Infinity" styleClass="btn-accent" 
+                onAction="#handleAbrirTurno"/>
+        
+        <Label fx:id="lblError" text="" style="-fx-text-fill: var(--color-error);" wrapText="true"/>
+    </VBox>
+
+    <Label text="v1.0.0 - Mayo 2026" style="-fx-text-fill: var(--color-text-secondary); -fx-font-size: 10px;"/>
+</VBox>
