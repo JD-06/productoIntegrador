@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="PosMaui.Vista.POS.POSPage"
+             BackgroundColor="#F5F5F5">
+
+    <Grid RowDefinitions="56,*,60">
+
+        <!-- BARRA SUPERIOR -->
+        <Grid Grid.Row="0" BackgroundColor="#1A2D5A" Padding="16,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Label Grid.Column="0" Text="POS ERP"
+                   TextColor="White" FontAttributes="Bold" FontSize="18"
+                   VerticalOptions="Center"/>
+            <Label Grid.Column="1" x:Name="lblCajero" Text=""
+                   TextColor="White" FontSize="13" VerticalOptions="Center"
+                   Margin="16,0,0,0"/>
+            <Label Grid.Column="2" x:Name="lblTurno" Text=""
+                   TextColor="White" FontSize="13" VerticalOptions="Center"
+                   Margin="16,0,0,0"/>
+            <Label Grid.Column="3" x:Name="lblEstado" Text=""
+                   TextColor="#F5A623" FontSize="11" VerticalOptions="Center"/>
+            <Button Grid.Column="4" Text="Cerrar Turno"
+                    BackgroundColor="#C62828" TextColor="White"
+                    CornerRadius="4" Padding="12,6"
+                    VerticalOptions="Center" Margin="8,0,0,0"
+                    Clicked="OnCerrarTurnoClicked"/>
+        </Grid>
+
+        <!-- CONTENIDO: CARRITO + CATÁLOGO -->
+        <Grid Grid.Row="1" ColumnDefinitions="*,460" Padding="10" ColumnSpacing="10">
+
+            <!-- CARRITO -->
+            <Border Grid.Column="0" BackgroundColor="White" StrokeThickness="0" Padding="16">
+                <Border.StrokeShape><RoundRectangle CornerRadius="6"/></Border.StrokeShape>
+                <Grid RowDefinitions="Auto,*,Auto">
+                    <Entry Grid.Row="0" x:Name="entrySku"
+                           Placeholder="Escanear código / SKU (Enter)" FontSize="15"
+                           Completed="OnSkuIngresado" Margin="0,0,0,8"/>
+
+                    <CollectionView Grid.Row="1" x:Name="listaCarrito" Margin="0,0,0,8">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid ColumnDefinitions="*,60,90,90,40" Padding="4">
+                                    <Label Grid.Column="0" Text="{Binding Nombre}" FontSize="13"/>
+                                    <Label Grid.Column="1" Text="{Binding Cantidad, StringFormat='{0:F0}'}"
+                                           HorizontalOptions="Center" FontSize="13"/>
+                                    <Label Grid.Column="2" Text="{Binding Precio, StringFormat='${0:F2}'}"
+                                           HorizontalOptions="End" FontSize="13"/>
+                                    <Label Grid.Column="3" Text="{Binding Subtotal, StringFormat='${0:F2}'}"
+                                           HorizontalOptions="End" FontSize="13" FontAttributes="Bold"/>
+                                    <Button Grid.Column="4" Text="X" FontSize="11"
+                                            BackgroundColor="#C62828" TextColor="White"
+                                            CornerRadius="4" Padding="4"
+                                            CommandParameter="{Binding .}"
+                                            Clicked="OnEliminarItemClicked"/>
+                                </Grid>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                    <!-- Totales -->
+                    <VerticalStackLayout Grid.Row="2" Spacing="4">
+                        <BoxView Color="#E0E0E0" HeightRequest="1"/>
+                        <Grid ColumnDefinitions="*,120">
+                            <Label Text="SUBTOTAL:" FontSize="15"/>
+                            <Label Grid.Column="1" x:Name="lblSubtotal" Text="$0.00"
+                                   FontSize="15" FontAttributes="Bold" HorizontalOptions="End"/>
+                        </Grid>
+                        <Grid ColumnDefinitions="*,120">
+                            <Label Text="IVA (16%):" FontSize="15"/>
+                            <Label Grid.Column="1" x:Name="lblIva" Text="$0.00"
+                                   FontSize="15" FontAttributes="Bold" HorizontalOptions="End"/>
+                        </Grid>
+                        <Grid ColumnDefinitions="*,120">
+                            <Label Text="TOTAL:" FontSize="22" FontAttributes="Bold" TextColor="#1A2D5A"/>
+                            <Label Grid.Column="1" x:Name="lblTotal" Text="$0.00"
+                                   FontSize="28" FontAttributes="Bold"
+                                   TextColor="#1A2D5A" HorizontalOptions="End"/>
+                        </Grid>
+                    </VerticalStackLayout>
+                </Grid>
+            </Border>
+
+            <!-- CATÁLOGO -->
+            <Grid Grid.Column="1" RowDefinitions="Auto,*,Auto" RowSpacing="8">
+                <SearchBar Grid.Row="0" x:Name="searchProducto"
+                           Placeholder="Buscar producto..." FontSize="13"
+                           TextChanged="OnBusquedaChanged"/>
+
+                <ScrollView Grid.Row="1" BackgroundColor="#F5F5F5">
+                    <FlexLayout x:Name="flexProductos"
+                                Wrap="Wrap" JustifyContent="Start"
+                                AlignItems="Start" Padding="4"/>
+                </ScrollView>
+
+                <HorizontalStackLayout Grid.Row="2" Spacing="6">
+                    <Button Text="Quitar [F11]" BackgroundColor="#C62828" TextColor="White"
+                            CornerRadius="4" HorizontalOptions="FillAndExpand"
+                            Clicked="OnQuitarClicked"/>
+                    <Button Text="Cancelar venta" BackgroundColor="#757575" TextColor="White"
+                            CornerRadius="4" HorizontalOptions="FillAndExpand"
+                            Clicked="OnCancelarVentaClicked"/>
+                </HorizontalStackLayout>
+            </Grid>
+        </Grid>
+
+        <!-- BARRA INFERIOR -->
+        <Grid Grid.Row="2" BackgroundColor="White" Padding="16,8" ColumnDefinitions="Auto,*,Auto">
+            <Button Grid.Column="0" Text="Cajón [F4]"
+                    BackgroundColor="#1A2D5A" TextColor="White"
+                    CornerRadius="4" Clicked="OnCajonClicked"/>
+            <Label Grid.Column="1" x:Name="lblItems" Text="0 items"
+                   TextColor="#757575" VerticalOptions="Center" Margin="12,0"/>
+            <Button Grid.Column="2" Text="COBRAR [F12]"
+                    BackgroundColor="#F5A623" TextColor="White"
+                    FontSize="18" FontAttributes="Bold" WidthRequest="280"
+                    CornerRadius="4" Clicked="OnCobrarClicked"/>
+        </Grid>
+    </Grid>
+</ContentPage>

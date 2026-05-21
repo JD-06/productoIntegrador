@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="PosMaui.Vista.Login.LoginPage"
+             BackgroundColor="#F5F5F5"
+             Title="POS Empresarial ERP">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="40" Spacing="0"
+                             HorizontalOptions="Center"
+                             VerticalOptions="Center"
+                             MaximumWidthRequest="400">
+
+            <!-- Header -->
+            <Label Text="POS EMPRESARIAL ERP"
+                   FontSize="28" FontAttributes="Bold"
+                   TextColor="#1A2D5A" HorizontalOptions="Center"/>
+            <Label Text="Inicio de Sesión"
+                   FontSize="14" TextColor="#757575"
+                   HorizontalOptions="Center" Margin="0,4,0,24"/>
+
+            <!-- Card -->
+            <Border BackgroundColor="White" StrokeThickness="0" Padding="30"
+                    Shadow="{Shadow Brush=Black, Offset='2,2', Radius=8, Opacity=0.1}">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="8"/>
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="16">
+
+                    <Label Text="Usuario" FontAttributes="Bold"/>
+                    <Picker x:Name="pickerUsuario" Title="Seleccione operador"
+                            SelectedIndexChanged="OnUsuarioChanged"/>
+
+                    <Label Text="PIN de Acceso" FontAttributes="Bold"/>
+                    <Entry x:Name="entryPin" Placeholder="****"
+                           IsPassword="True" FontSize="16"
+                           Completed="OnEntryCompleted"/>
+
+                    <VerticalStackLayout x:Name="stackFondo" Spacing="4">
+                        <Label Text="Fondo Inicial (Efectivo)" FontAttributes="Bold"/>
+                        <Entry x:Name="entryFondo" Placeholder="0.00"
+                               Keyboard="Numeric" FontSize="16"
+                               Completed="OnEntryCompleted"/>
+                    </VerticalStackLayout>
+
+                    <Button Text="ABRIR TURNO [Enter]"
+                            BackgroundColor="#F5A623" TextColor="White"
+                            FontSize="16" FontAttributes="Bold"
+                            HeightRequest="56" CornerRadius="4"
+                            Clicked="OnAbrirTurnoClicked"/>
+
+                    <Label x:Name="lblError" Text="" TextColor="#C62828"
+                           IsVisible="False" HorizontalOptions="Center"/>
+                </VerticalStackLayout>
+            </Border>
+
+            <Label Text="v1.0.0 - Mayo 2026"
+                   FontSize="10" TextColor="#9E9E9E"
+                   HorizontalOptions="Center" Margin="0,16,0,0"/>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

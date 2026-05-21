@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="PosMaui.Vista.Admin.AdminPage"
+             BackgroundColor="#F5F5F5">
+
+    <Grid RowDefinitions="56,*">
+
+        <!-- HEADER -->
+        <Grid Grid.Row="0" BackgroundColor="#1A2D5A" Padding="16,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Label Grid.Column="0" Text="SUITE CORPORATIVA ERP / CRM"
+                   TextColor="White" FontAttributes="Bold" FontSize="16"
+                   VerticalOptions="Center"/>
+            <Label Grid.Column="1" x:Name="lblAdmin" TextColor="White"
+                   FontSize="13" VerticalOptions="Center" Margin="0,0,12,0"/>
+            <Button Grid.Column="2" Text="Salir"
+                    BorderColor="White" BorderWidth="1"
+                    BackgroundColor="Transparent" TextColor="White"
+                    CornerRadius="4" Padding="12,6"
+                    Clicked="OnSalirClicked"/>
+        </Grid>
+
+        <!-- SHELL CON TABS (navegación lateral simulada) -->
+        <TabbedPage x:Name="tabbedAdmin" Grid.Row="1"
+                    BarBackgroundColor="#263238" BarTextColor="#CFD8DC"
+                    SelectedTabColor="White">
+
+            <!-- Monitor y Cortes -->
+            <ContentPage Title="Monitor">
+                <ScrollView>
+                    <VerticalStackLayout Padding="20" Spacing="16">
+                        <Label Text="Monitor y Cortes" FontSize="22" FontAttributes="Bold"/>
+
+                        <!-- KPIs -->
+                        <Grid ColumnDefinitions="*,*,*" ColumnSpacing="12">
+                            <Border Grid.Column="0" BackgroundColor="White" Padding="16" StrokeThickness="0">
+                                <Border.StrokeShape><RoundRectangle CornerRadius="8"/></Border.StrokeShape>
+                                <VerticalStackLayout>
+                                    <Label Text="Ventas Globales" FontSize="12" TextColor="#757575"/>
+                                    <Label x:Name="lblVentasGlobales" Text="$0.00"
+                                           FontSize="26" FontAttributes="Bold" TextColor="#1A2D5A"/>
+                                </VerticalStackLayout>
+                            </Border>
+                            <Border Grid.Column="1" BackgroundColor="White" Padding="16" StrokeThickness="0">
+                                <Border.StrokeShape><RoundRectangle CornerRadius="8"/></Border.StrokeShape>
+                                <VerticalStackLayout>
+                                    <Label Text="Cortes" FontSize="12" TextColor="#757575"/>
+                                    <Label x:Name="lblCortes" Text="0"
+                                           FontSize="26" FontAttributes="Bold" TextColor="#1A2D5A"/>
+                                </VerticalStackLayout>
+                            </Border>
+                            <Border Grid.Column="2" BackgroundColor="White" Padding="16" StrokeThickness="0">
+                                <Border.StrokeShape><RoundRectangle CornerRadius="8"/></Border.StrokeShape>
+                                <VerticalStackLayout>
+                                    <Label Text="Turnos Activos" FontSize="12" TextColor="#757575"/>
+                                    <Label x:Name="lblTurnosActivos" Text="0"
+                                           FontSize="26" FontAttributes="Bold" TextColor="#1A2D5A"/>
+                                </VerticalStackLayout>
+                            </Border>
+                        </Grid>
+
+                        <!-- Alertas stock -->
+                        <Border BackgroundColor="White" Padding="16" StrokeThickness="1.5"
+                                Stroke="#C62828">
+                            <Border.StrokeShape><RoundRectangle CornerRadius="6"/></Border.StrokeShape>
+                            <VerticalStackLayout>
+                                <Label Text="Alertas — Bajo Stock" TextColor="#C62828"
+                                       FontAttributes="Bold" Margin="0,0,0,8"/>
+                                <CollectionView x:Name="listaAlertas" HeightRequest="160">
+                                    <CollectionView.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid ColumnDefinitions="80,*,80,80" Padding="4">
+                                                <Label Grid.Column="0" Text="{Binding Sku}" FontSize="12"/>
+                                                <Label Grid.Column="1" Text="{Binding Nombre}" FontSize="12"/>
+                                                <Label Grid.Column="2" Text="{Binding StockActual}"
+                                                       FontSize="12" TextColor="Red" HorizontalOptions="Center"/>
+                                                <Label Grid.Column="3" Text="{Binding StockMinimo}"
+                                                       FontSize="12" HorizontalOptions="Center"/>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </CollectionView.ItemTemplate>
+                                </CollectionView>
+                            </VerticalStackLayout>
+                        </Border>
+                    </VerticalStackLayout>
+                </ScrollView>
+            </ContentPage>
+
+            <!-- Catálogo -->
+            <ContentPage Title="Catalogo">
+                <Grid RowDefinitions="Auto,*" Padding="16" RowSpacing="8">
+                    <SearchBar Grid.Row="0" x:Name="searchCatalogo"
+                               Placeholder="Buscar producto..." TextChanged="OnBusquedaCatalogoChanged"/>
+                    <CollectionView Grid.Row="1" x:Name="listaCatalogo">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid ColumnDefinitions="60,*,80,80,60" Padding="8">
+                                    <Label Grid.Column="0" Text="{Binding Sku}" FontSize="12"/>
+                                    <Label Grid.Column="1" Text="{Binding Nombre}" FontSize="12"/>
+                                    <Label Grid.Column="2" Text="{Binding PrecioFormateado}"
+                                           FontSize="12" HorizontalOptions="End"/>
+                                    <Label Grid.Column="3" Text="{Binding StockActual}"
+                                           FontSize="12" HorizontalOptions="Center"/>
+                                    <Label Grid.Column="4" Text="{Binding Categoria}"
+                                           FontSize="10" TextColor="#757575"/>
+                                </Grid>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </Grid>
+            </ContentPage>
+
+            <!-- Usuarios -->
+            <ContentPage Title="Usuarios">
+                <Grid RowDefinitions="Auto,*" Padding="16" RowSpacing="12">
+                    <Button Grid.Row="0" Text="+ Nuevo Usuario"
+                            BackgroundColor="#2E7D32" TextColor="White"
+                            CornerRadius="4" HorizontalOptions="End"
+                            Clicked="OnNuevoUsuarioClicked"/>
+                    <CollectionView Grid.Row="1" x:Name="listaUsuarios">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid ColumnDefinitions="*,100,100,Auto" Padding="8">
+                                    <Label Grid.Column="0" Text="{Binding Nombre}" FontSize="13"/>
+                                    <Label Grid.Column="1" Text="{Binding Rol}"
+                                           FontSize="12" TextColor="#1A2D5A"/>
+                                    <Label Grid.Column="2"
+                                           Text="{Binding Activo, Converter={StaticResource BoolToEstado}}"
+                                           FontSize="12"/>
+                                </Grid>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </Grid>
+            </ContentPage>
+
+        </TabbedPage>
+    </Grid>
+</ContentPage>

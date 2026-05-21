@@ -1,0 +1,18 @@
+# Build
+bin/
+obj/
+*.user
+
+# Credenciales
+.env
+
+# VS
+.vs/
+*.suo
+*.userprefs
+
+# Rider
+.idea/
+
+# Paquetes locales
+packages/
