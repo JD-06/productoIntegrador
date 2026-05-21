@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.empresa.pos.controlador.AdminController"
+            stylesheets="@../css/design-system.css">
+
+    <!-- HEADER -->
+    <top>
+        <HBox styleClass="top-bar" alignment="CENTER_LEFT" spacing="16">
+            <Label text="SUITE CORPORATIVA ERP / CRM"
+                   style="-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 16px;"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label fx:id="lblAdminNombre" text="Admin:"
+                   style="-fx-text-fill: white; -fx-font-size: 13px;"/>
+            <Button text="Salir" styleClass="btn-salir" onAction="#handleSalir"/>
+        </HBox>
+    </top>
+
+    <!-- SIDEBAR -->
+    <left>
+        <ScrollPane fitToWidth="true" style="-fx-background: #263238; -fx-background-color: #263238;"
+                    hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" prefWidth="230">
+            <VBox styleClass="sidebar" spacing="2" prefWidth="230">
+                <padding><Insets top="12" right="0" bottom="20" left="0"/></padding>
+
+                <Label text="VENTAS Y OPERACION" styleClass="sidebar-group"/>
+                <Button text="Monitor y Cortes" styleClass="sidebar-item" maxWidth="Infinity"
+                        onAction="#showMonitorCortes"/>
+
+                <Label text="CATALOGOS BASE" styleClass="sidebar-group"/>
+                <Button text="Catalogo de Productos" styleClass="sidebar-item" maxWidth="Infinity"
+                        onAction="#showCatalogo"/>
+                <Button text="Categorias" styleClass="sidebar-item" maxWidth="Infinity"
+                        onAction="#showCategorias"/>
+
+                <Label text="CRM Y CLIENTES" styleClass="sidebar-group"/>
+                <Button text="Directorio CRM" styleClass="sidebar-item" maxWidth="Infinity"
+                        onAction="#showCRM"/>
+                <Button text="Premios y Lealtad" styleClass="sidebar-item" maxWidth="Infinity"
+                        onAction="#showPremios"/>
+
+                <Label text="MODULOS ERP" styleClass="sidebar-group"/>
+                <Button text="Compras e Inventario" styleClass="sidebar-item" maxWidth="Infinity"
+                        onAction="#showComprasInventario"/>
+                <Button text="Cuentas por Cobrar" styleClass="sidebar-item" maxWidth="Infinity"
+                        onAction="#showCxC"/>
+                <Button text="Cuentas por Pagar" styleClass="sidebar-item" maxWidth="Infinity"
+                        onAction="#showCxP"/>
+                <Button text="Nomina y RRHH" styleClass="sidebar-item" maxWidth="Infinity"
+                        onAction="#showNomina"/>
+
+                <Label text="SISTEMA Y SEGURIDAD" styleClass="sidebar-group"/>
+                <Button text="Gestion de Usuarios" styleClass="sidebar-item" maxWidth="Infinity"
+                        onAction="#showUsuarios"/>
+                <Button text="Seguridad (Permisos)" styleClass="sidebar-item" maxWidth="Infinity"
+                        onAction="#showSeguridad"/>
+                <Button text="Log Auditoria" styleClass="sidebar-item" maxWidth="Infinity"
+                        onAction="#showLog"/>
+                <Button text="Utilerias del Sistema" styleClass="sidebar-item" maxWidth="Infinity"
+                        onAction="#showUtilerias"/>
+            </VBox>
+        </ScrollPane>
+    </left>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <center>
+        <StackPane fx:id="contenido" style="-fx-background-color: #F5F5F5;">
+            <padding><Insets top="24" right="24" bottom="24" left="24"/></padding>
+        </StackPane>
+    </center>
+</BorderPane>

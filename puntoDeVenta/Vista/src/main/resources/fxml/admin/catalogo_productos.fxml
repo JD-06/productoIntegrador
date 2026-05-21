@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.empresa.pos.controlador.admin.CatalogoController"
+      spacing="16">
+
+    <!-- Toolbar -->
+    <HBox alignment="CENTER_LEFT" spacing="12">
+        <Label text="Catalogo de Productos" styleClass="page-title" HBox.hgrow="ALWAYS"/>
+        <Button text="+ Agregar Stock" styleClass="btn-primary" onAction="#handleAgregarStock"/>
+        <Button text="+ Importar JSON" styleClass="btn-primary" onAction="#handleImportarJSON"/>
+        <Button text="+ Nuevo Producto" styleClass="btn-success" onAction="#handleNuevoProducto"/>
+    </HBox>
+
+    <!-- Filtros -->
+    <HBox spacing="12" alignment="CENTER_LEFT">
+        <TextField fx:id="txtBusqueda" promptText="Buscar por nombre, SKU o marca..."
+                   HBox.hgrow="ALWAYS" style="-fx-font-size: 13px;"/>
+        <ComboBox fx:id="cmbCategoria" promptText="Todas las categorias" prefWidth="200"/>
+    </HBox>
+
+    <!-- Tabla -->
+    <VBox styleClass="card" VBox.vgrow="ALWAYS" spacing="0">
+        <TableView fx:id="tblProductos" VBox.vgrow="ALWAYS">
+            <columns>
+                <TableColumn fx:id="colImagen"    text="Img"       prefWidth="60"/>
+                <TableColumn fx:id="colSku"       text="SKU"       prefWidth="80"/>
+                <TableColumn fx:id="colNombre"    text="Nombre"    prefWidth="200"/>
+                <TableColumn fx:id="colMarca"     text="Marca"     prefWidth="120"/>
+                <TableColumn fx:id="colCategoria" text="Categoria" prefWidth="120"/>
+                <TableColumn fx:id="colPrecio"    text="Precio"    prefWidth="90"/>
+                <TableColumn fx:id="colStock"     text="Stock"     prefWidth="70"/>
+                <TableColumn fx:id="colUnidad"    text="Unidad"    prefWidth="70"/>
+                <TableColumn fx:id="colActivo"    text="Activo"    prefWidth="60"/>
+            </columns>
+        </TableView>
+    </VBox>
+</VBox>

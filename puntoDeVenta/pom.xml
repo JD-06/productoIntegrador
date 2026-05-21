@@ -35,14 +35,16 @@
     </properties>
 
     <modules>
-        <module>pos-core</module>
-        <module>pos-ui</module>
-        <module>pos-data</module>
-        <module>pos-sync</module>
-        <module>pos-fiscal</module>
-        <module>pos-peripherals</module>
-        <module>pos-reports</module>
-        <module>pos-admin</module>
+        <!-- MVC -->
+        <module>Modelo</module>
+        <module>Vista</module>
+        <module>Controlador</module>
+        <!-- Módulos adicionales -->
+        <module>Sincronizacion</module>
+        <module>Fiscal</module>
+        <module>Perifericos</module>
+        <module>Reportes</module>
+        <module>Admin</module>
     </modules>
 
     <dependencyManagement>

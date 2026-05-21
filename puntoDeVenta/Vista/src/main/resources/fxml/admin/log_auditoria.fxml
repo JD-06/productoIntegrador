@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.empresa.pos.controlador.admin.LogAuditoriaController"
+      spacing="16">
+
+    <Label text="Log de Auditoria" styleClass="page-title"/>
+
+    <VBox styleClass="card" VBox.vgrow="ALWAYS" spacing="0">
+        <TableView fx:id="tblLog" VBox.vgrow="ALWAYS">
+            <columns>
+                <TableColumn fx:id="colLogId"      text="ID"      prefWidth="60"/>
+                <TableColumn fx:id="colLogUsuario" text="Usuario" prefWidth="150"/>
+                <TableColumn fx:id="colLogAccion"  text="Accion"  prefWidth="200"/>
+                <TableColumn fx:id="colLogTabla"   text="Tabla"   prefWidth="140"/>
+                <TableColumn fx:id="colLogFecha"   text="Fecha"   prefWidth="160"/>
+            </columns>
+        </TableView>
+    </VBox>
+</VBox>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.empresa.pos.controlador.admin.NominaController"
+      spacing="16">
+
+    <HBox alignment="CENTER_LEFT" spacing="12">
+        <Label text="Nomina y RRHH" styleClass="page-title" HBox.hgrow="ALWAYS"/>
+        <ComboBox fx:id="cmbPeriodos" promptText="Seleccionar periodo..." prefWidth="220"/>
+        <Button text="+ Nuevo Periodo" styleClass="btn-primary" onAction="#handleNuevoPeriodo"/>
+    </HBox>
+
+    <SplitPane VBox.vgrow="ALWAYS" orientation="VERTICAL" dividerPositions="0.45">
+
+        <!-- Panel superior: Empleados -->
+        <VBox styleClass="card" spacing="10">
+            <Label text="Empleados" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
+            <TableView fx:id="tblEmpleados" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="colEmpNombre"  text="Nombre"      prefWidth="220"/>
+                    <TableColumn fx:id="colEmpPuesto"  text="Puesto"      prefWidth="160"/>
+                    <TableColumn fx:id="colEmpSalario" text="Salario Base" prefWidth="130"/>
+                    <TableColumn fx:id="colEmpActivo"  text="Activo"      prefWidth="80"/>
+                </columns>
+            </TableView>
+        </VBox>
+
+        <!-- Panel inferior: Lineas de nomina -->
+        <VBox styleClass="card" spacing="10">
+            <Label text="Lineas de Nomina del Periodo Seleccionado"
+                   style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
+            <TableView fx:id="tblNomina" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="colNomEmpleado"    text="Empleado"      prefWidth="200"/>
+                    <TableColumn fx:id="colNomSalario"     text="Salario Base"  prefWidth="130"/>
+                    <TableColumn fx:id="colNomDeducciones" text="Deducciones"   prefWidth="120"/>
+                    <TableColumn fx:id="colNomNeto"        text="Neto a Pagar"  prefWidth="130"/>
+                </columns>
+            </TableView>
+        </VBox>
+    </SplitPane>
+</VBox>

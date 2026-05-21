@@ -1,0 +1,38 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git fetch *)",
+      "Bash(git pull *)",
+      "Bash(winget search *)",
+      "Bash(choco -version)",
+      "Bash(/c/maven/bin/mvn install *)",
+      "Bash(/c/maven/bin/mvn javafx:run)",
+      "Bash(grep *)",
+      "Bash(/c/maven/bin/mvn clean *)",
+      "Bash(timeout 5 bash -c 'echo >/dev/tcp/163.192.131.106/5432')",
+      "Bash(python3 -c \"import json; data=json.load\\(open\\('C:/Users/const/Desktop/productoIntegrador/productos.json'\\)\\); print\\(f'Total: {len\\(data\\)} productos'\\); cats=set\\(p[\\\\\"categoria\\\\\"] for p in data\\); print\\(f'Categorias unicas: {len\\(cats\\)}'\\)\")",
+      "Bash(powershell -Command \"Get-Content 'C:\\\\Users\\\\const\\\\Desktop\\\\productoIntegrador\\\\productos.json' | Select-Object -First 3\")",
+      "Bash(git remote *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)",
+      "Bash(mkdir -p Modelo/src/main/java/com/empresa/pos)",
+      "Bash(mkdir -p Modelo/src/main/resources)",
+      "Bash(mkdir -p Vista/src/main/resources)",
+      "Bash(mkdir -p Controlador/src/main/java/com/empresa/pos)",
+      "Bash(mkdir -p Sincronizacion/src/main/java/com/empresa/pos)",
+      "Bash(mkdir -p Fiscal Perifericos Reportes Admin)",
+      "Bash(cp -r pos-core/src/main/java/com/empresa/pos/entity Modelo/src/main/java/com/empresa/pos/entidad)",
+      "Bash(cp -r pos-core/src/main/java/com/empresa/pos/service Modelo/src/main/java/com/empresa/pos/servicio)",
+      "Bash(cp -r pos-data/src/main/java/com/empresa/pos/dao Modelo/src/main/java/com/empresa/pos/dao)",
+      "Bash(cp -r pos-data/src/main/resources/db Modelo/src/main/resources/db)",
+      "Bash(cp pos-data/src/main/resources/database.properties Modelo/src/main/resources/database.properties)",
+      "Bash(cp -r pos-ui/src/main/resources/fxml Vista/src/main/resources/fxml)",
+      "Bash(cp -r pos-ui/src/main/resources/css Vista/src/main/resources/css)",
+      "Bash(cp -r pos-ui/src/main/java/com/empresa/pos/controller Controlador/src/main/java/com/empresa/pos/controlador)",
+      "Bash(cp -r pos-ui/src/main/java/com/empresa/pos/model Controlador/src/main/java/com/empresa/pos/modelo)",
+      "Bash(cp -r pos-ui/src/main/java/com/empresa/pos/ui Controlador/src/main/java/com/empresa/pos/app)",
+      "Bash(cp pos-ui/.env.example Controlador/.env.example)",
+      "Bash(xargs sed *)"
+    ]
+  }
+}

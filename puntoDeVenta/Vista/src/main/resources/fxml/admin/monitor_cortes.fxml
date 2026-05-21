@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.empresa.pos.controlador.admin.MonitorController"
+      spacing="20">
+
+    <Label text="Monitor y Cortes" styleClass="page-title"/>
+
+    <!-- KPI Cards -->
+    <HBox spacing="16">
+        <VBox styleClass="kpi-card" HBox.hgrow="ALWAYS" alignment="CENTER" spacing="6">
+            <Label text="Ventas Globales" styleClass="kpi-label"/>
+            <Label fx:id="lblVentasGlobales" text="0.00" styleClass="kpi-value"/>
+        </VBox>
+        <VBox styleClass="kpi-card" HBox.hgrow="ALWAYS" alignment="CENTER" spacing="6">
+            <Label text="Cortes Registrados" styleClass="kpi-label"/>
+            <Label fx:id="lblCortes" text="0" styleClass="kpi-value"/>
+        </VBox>
+        <VBox styleClass="kpi-card" HBox.hgrow="ALWAYS" alignment="CENTER" spacing="6">
+            <Label text="Turnos Activos" styleClass="kpi-label"/>
+            <Label fx:id="lblTurnos" text="0" styleClass="kpi-value"/>
+        </VBox>
+    </HBox>
+
+    <!-- Alertas de inventario -->
+    <VBox styleClass="card-alert" spacing="10">
+        <Label text="Alertas de Inventario — Bajo Stock" styleClass="alert-title"/>
+        <TableView fx:id="tblAlertas" prefHeight="160">
+            <columns>
+                <TableColumn fx:id="colAlertaSku"       text="SKU"         prefWidth="80"/>
+                <TableColumn fx:id="colAlertaNombre"    text="Producto"    prefWidth="200"/>
+                <TableColumn fx:id="colAlertaCategoria" text="Categoria"   prefWidth="130"/>
+                <TableColumn fx:id="colAlertaStock"     text="Stock Actual" prefWidth="110"/>
+                <TableColumn fx:id="colAlertaMinimo"    text="Stock Minimo" prefWidth="110"/>
+            </columns>
+        </TableView>
+    </VBox>
+
+    <!-- Historico de Cortes -->
+    <VBox styleClass="card" spacing="10" VBox.vgrow="ALWAYS">
+        <Label text="Historico de Cortes y Turnos"
+               style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #212121;"/>
+        <TableView fx:id="tblCortes" VBox.vgrow="ALWAYS">
+            <columns>
+                <TableColumn fx:id="colCajero"       text="Cajero"        prefWidth="140"/>
+                <TableColumn fx:id="colFondoInicial" text="Fondo Inicial" prefWidth="120"/>
+                <TableColumn fx:id="colEfectivo"     text="Efectivo"      prefWidth="120"/>
+                <TableColumn fx:id="colTarjeta"      text="Tarjeta"       prefWidth="120"/>
+                <TableColumn fx:id="colVentaTotal"   text="Venta Total"   prefWidth="120"/>
+                <TableColumn fx:id="colEstado"       text="Estado"        prefWidth="100"/>
+            </columns>
+        </TableView>
+    </VBox>
+</VBox>

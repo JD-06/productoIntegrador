@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.empresa.pos.controlador.admin.SeguridadController"
+      spacing="16">
+
+    <Label text="Seguridad y Permisos" styleClass="page-title"/>
+
+    <SplitPane VBox.vgrow="ALWAYS" dividerPositions="0.35">
+
+        <!-- Izquierda: Usuarios -->
+        <VBox styleClass="card" spacing="10" minWidth="200">
+            <Label text="Usuarios del Sistema"
+                   style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
+            <TableView fx:id="tblUsuarios" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="colUsrNombre" text="Nombre" prefWidth="140"/>
+                    <TableColumn fx:id="colUsrRol"    text="Rol"    prefWidth="110"/>
+                    <TableColumn fx:id="colUsrActivo" text="Activo" prefWidth="70"/>
+                </columns>
+            </TableView>
+        </VBox>
+
+        <!-- Derecha: Permisos por rol -->
+        <VBox styleClass="card" spacing="10">
+            <Label text="Permisos disponibles por Rol"
+                   style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
+            <ListView fx:id="listPermisos" VBox.vgrow="ALWAYS"
+                      style="-fx-font-size: 13px;"/>
+            <HBox spacing="10" alignment="CENTER_RIGHT">
+                <Label fx:id="lblRolSeleccionado"
+                       text="Selecciona un usuario para ver sus permisos."
+                       style="-fx-text-fill: #757575;"/>
+            </HBox>
+        </VBox>
+    </SplitPane>
+</VBox>

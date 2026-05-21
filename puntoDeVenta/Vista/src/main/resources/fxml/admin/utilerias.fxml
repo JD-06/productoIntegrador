@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.empresa.pos.controlador.admin.UtileriasController"
+      spacing="20">
+
+    <Label text="Utilerias del Sistema" styleClass="page-title"/>
+
+    <!-- Card: Exportar datos -->
+    <VBox styleClass="card" spacing="12">
+        <Label text="Exportar Datos" style="-fx-font-weight: bold; -fx-font-size: 15px;"/>
+        <Label text="Exporta el catalogo de productos y clientes a archivos CSV."
+               style="-fx-text-fill: #616161;"/>
+        <HBox spacing="10">
+            <Button text="Exportar Productos CSV" styleClass="btn-primary" onAction="#handleExportarProductos"/>
+            <Button text="Exportar Clientes CSV"  styleClass="btn-primary" onAction="#handleExportarClientes"/>
+        </HBox>
+    </VBox>
+
+    <!-- Card: Informacion del sistema -->
+    <VBox styleClass="card" spacing="12">
+        <Label text="Informacion del Sistema" style="-fx-font-weight: bold; -fx-font-size: 15px;"/>
+        <HBox spacing="20">
+            <VBox spacing="6">
+                <Label text="Version:"      style="-fx-text-fill: #757575;"/>
+                <Label text="Base de Datos:" style="-fx-text-fill: #757575;"/>
+                <Label text="Conexion:"     style="-fx-text-fill: #757575;"/>
+            </VBox>
+            <VBox spacing="6">
+                <Label fx:id="lblVersion"    text="1.0.0-SNAPSHOT"/>
+                <Label fx:id="lblBaseDatos"  text="PostgreSQL"/>
+                <Label fx:id="lblConexion"   text="Verificando..."/>
+            </VBox>
+        </HBox>
+    </VBox>
+
+    <!-- Card: Seed de datos -->
+    <VBox styleClass="card" spacing="12">
+        <Label text="Seed de Datos de Prueba" style="-fx-font-weight: bold; -fx-font-size: 15px;"/>
+        <Label text="Inserta datos de ejemplo si la base de datos esta vacia. No sobreescribe datos existentes."
+               style="-fx-text-fill: #616161;"/>
+        <Button text="Insertar Datos de Prueba" styleClass="btn-accent" onAction="#handleSeed"
+                prefWidth="220"/>
+    </VBox>
+</VBox>
